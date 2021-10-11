@@ -1,0 +1,12 @@
+.key {
+    height: 60px;
+    border: 1px solid #808080;
+    padding: 10px;
+    font-size: 30px;
+    cursor: pointer;
+    margin: 4px;
+  }
+
+  .key:active {
+    background-color: #d4d4d4;
+  }

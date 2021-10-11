@@ -1,0 +1,14 @@
+.menu-list {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.menu-list li {
+  cursor: pointer;
+  background-color: #1d2025;
+  border: 1px solid #575757;
+  padding: 30px 44px;
+  z-index: 2;
+}
