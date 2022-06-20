@@ -82,6 +82,12 @@ function App() {
   }, []);
 
   useEffect(() => {
+    /*
+    TODO: Api call in sepatate file
+    Connect to api
+    Add level choice and send as query param
+    Send arithmetic method as query param
+    */
     const getTasks = async () => {
       let url = '';
       switch (operator) {
