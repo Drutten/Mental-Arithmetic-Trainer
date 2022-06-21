@@ -44,7 +44,7 @@ nav {
 
 .container {
   padding: 40px 40px 60px;
-  margin-top: 40px;
+  margin-top: 60px;
   border: 1px solid #575757;
   width: 280px;
 }
@@ -86,6 +86,23 @@ nav {
   color: #61dafb;
 }
 
+form {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  /* margin-top: 20px; */
+}
+
+input[type="radio"] {
+  accent-color: #f41bf4;
+}
+
+label:first-child {
+  margin-right: 12px;
+}
+
 .error {
   padding: 4px;
   margin-bottom: 10px;
@@ -112,8 +129,6 @@ nav {
   background-color: #fcbac5;
 }
 
-.loading {}
-
 .not-displayed {
   display: none;
 }
@@ -127,6 +142,13 @@ nav {
 @media(min-width: 500px){
   .container {
     margin-top: 100px;
+  }
+  form {
+    top: 100px;
+    font-size: 20px;
+  }
+  label:first-child {
+    margin-right: 24px;
   } 
 }
 

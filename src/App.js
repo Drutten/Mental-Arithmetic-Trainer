@@ -6,6 +6,13 @@ import './App.css';
 import KeyPad from './components/keypad/KeyPad';
 import Hamburger from './components/hamburger/Hamburger';
 import Menu from './components/menu/Menu';
+import {
+  BASE_URL,
+  TASKS_ENDPOINT,
+  ARITHMETIC_METHOD_QUERY,
+  LEVEL_QUERY,
+  arithmeticMethods,
+} from './constants';
 
 function App() {
   const Operator = {
@@ -34,12 +41,17 @@ function App() {
       operatorValue: 3,
     },
   ];
+  const levels = Object.freeze([
+    { value: '1', label: 'Level 1' },
+    { value: '2', label: 'Level 2' },
+  ]);
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState(null);
   const [count, setCount] = useState(0);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState('');
   const [operator, setOperator] = useState(Operator.ADDITION);
+  const [level, setLevel] = useState(levels[0].value);
   const [currentInput, setCurrentInput] = useState('');
   const [boxOpen, setBoxOpen] = useState(false);
   const [message, setMessage] = useState('');
@@ -82,28 +94,20 @@ function App() {
   }, []);
 
   useEffect(() => {
-    /*
-    TODO: Api call in sepatate file
-    Connect to api
-    Add level choice and send as query param
-    Send arithmetic method as query param
-    */
     const getTasks = async () => {
-      let url = '';
-      switch (operator) {
-        case 0: url = './data/add.json';
-          break;
-        case 1: url = './data/sub.json';
-          break;
-        case 2: url = './data/mult.json';
-          break;
-        case 3: url = './data/div.json';
-          break;
-        default: url = './data/add.json';
+      const url = BASE_URL + TASKS_ENDPOINT;
+      let arithmeticMethodQuery = `${ARITHMETIC_METHOD_QUERY}addition`;
+      const levelQuery = `${LEVEL_QUERY}${level}`;
+      for (let i = 0; i < arithmeticMethods.length; i += 1) {
+        if (operator === i) {
+          arithmeticMethodQuery = `${ARITHMETIC_METHOD_QUERY}${arithmeticMethods[i]}`;
+        }
       }
+      const fullUrl = `${url}${arithmeticMethodQuery}${levelQuery}`;
+
       setLoading('Loading...');
       setError('');
-      const result = await fetch(url, {
+      const result = await fetch(fullUrl, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -122,7 +126,7 @@ function App() {
     };
     getTasks();
     // eslint-disable-next-line
-  }, [operator]);
+  }, [operator, level]);
 
   const selectNumber = (enteredInput) => {
     if (!Number.isNaN(parseInt(enteredInput, 10)) && currentInput.length < inputLengthLimit) {
@@ -156,6 +160,10 @@ function App() {
     setOperator(operatorValue);
   };
 
+  const handleSetLevel = (e) => {
+    setLevel(e.target.value);
+  };
+
   const toggleMenu = () => {
     setMenuToggler(!menuToggler);
   };
@@ -178,6 +186,32 @@ function App() {
     </div>
   );
 
+  const displaySetLevel = () => (
+    <form>
+      <label htmlFor="level1">
+        Level 1
+        <input
+          type="radio"
+          id="level1"
+          value={levels[0].value}
+          checked={level === levels[0].value}
+          onChange={handleSetLevel}
+        />
+      </label>
+
+      <label htmlFor="level2">
+        Level 2
+        <input
+          type="radio"
+          id="level2"
+          value={levels[1].value}
+          onChange={handleSetLevel}
+          checked={level === levels[1].value}
+        />
+      </label>
+    </form>
+  );
+
   return (
     <div className="App">
       <nav>
@@ -189,6 +223,7 @@ function App() {
         <div className={`menu-container ${(menuToggler) ? 'menu-open' : ''}`} ref={menuContainerRef}>
           <Menu menuItems={menuItems} menuWidth="300px" handleSetOperator={handleSetOperator} />
         </div>
+        {displaySetLevel()}
         <div className="container">
           {displayBox()}
           {displayError()}
