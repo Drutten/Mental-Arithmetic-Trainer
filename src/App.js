@@ -96,7 +96,7 @@ function App() {
   useEffect(() => {
     const getTasks = async () => {
       const url = BASE_URL + TASKS_ENDPOINT;
-      let arithmeticMethodQuery = `${ARITHMETIC_METHOD_QUERY}addition`;
+      let arithmeticMethodQuery = '';
       const levelQuery = `${LEVEL_QUERY}${level}`;
       for (let i = 0; i < arithmeticMethods.length; i += 1) {
         if (operator === i) {
@@ -107,6 +107,8 @@ function App() {
 
       setLoading('Loading...');
       setError('');
+      setTasks([]);
+      setTask(null);
       const result = await fetch(fullUrl, {
         headers: {
           'Content-Type': 'application/json',
@@ -116,6 +118,8 @@ function App() {
       const data = await result.json();
       if (data.error) {
         setError(data.error);
+      } else if (data.length === 0) {
+        setError('No matching tasks');
       } else {
         const shuffledTasks = shuffleTasks(data);
         setTasks(shuffledTasks);
@@ -139,20 +143,22 @@ function App() {
   };
 
   const submitAnswer = () => {
-    if (!Number.isNaN(parseInt(task.firstNum, 10))
-    && !Number.isNaN(parseInt(task.lastNum, 10))
-    && !Number.isNaN(parseInt(currentInput, 10))) {
-      const num1 = parseInt(task.firstNum, 10);
-      const num2 = parseInt(task.lastNum, 10);
-      const calculatedAnswer = calculate(num1, num2, operator);
-      setMessage(createMessage(num1, num2, operator, calculatedAnswer));
-      if (calculatedAnswer === parseInt(currentInput, 10)) {
-        setSuccess(true);
-      } else {
-        setSuccess(false);
+    if (task) {
+      if (!Number.isNaN(parseInt(task.firstNum, 10))
+      && !Number.isNaN(parseInt(task.lastNum, 10))
+      && !Number.isNaN(parseInt(currentInput, 10))) {
+        const num1 = parseInt(task.firstNum, 10);
+        const num2 = parseInt(task.lastNum, 10);
+        const calculatedAnswer = calculate(num1, num2, operator);
+        setMessage(createMessage(num1, num2, operator, calculatedAnswer));
+        if (calculatedAnswer === parseInt(currentInput, 10)) {
+          setSuccess(true);
+        } else {
+          setSuccess(false);
+        }
+        setBoxOpen(true);
+        changeQuestion();
       }
-      setBoxOpen(true);
-      changeQuestion();
     }
   };
 
@@ -230,7 +236,7 @@ function App() {
           {displayLoading()}
           <div className="question">
             <div>
-              {(task)
+              {(tasks.length > 0 && task)
                 ? (
                   <span data-testid="task">
                     {`${task.firstNum} ${printOperator(operator)} ${task.lastNum} = `}
